@@ -4,71 +4,38 @@
  */
 package hr.dandelic.tcpclient;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.io.PrintWriter;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.text.DefaultCaret;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Objects;
+
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 /**
- *
  * @author dominikandelic
  */
 public class ClientGui implements Runnable {
 
     private final String username;
-    private PrintWriter out;
-    private DefaultListModel<String> activeUserList;
-    private JList<String> activeUsers;
-
-    public JList<String> getActiveUsers() {
-        return activeUsers;
-    }
-
-    public void setOut(PrintWriter out) {
-        this.out = out;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
+    private final DefaultListModel<String> activeUserList;
     private final JTextArea chatArea;
     private final JButton submitMessage;
     private final JTextArea messageArea;
-    private final Insets margin;
-    private ImageIcon icon;
-
-    public JTextArea getChatArea() {
-        return chatArea;
-    }
-
-    public JTextArea getMessageArea() {
-        return messageArea;
-    }
-
+    private PrintWriter out;
     public ClientGui() {
         JFrame mainFrame = new JFrame("Messenger");
 
         try {
-            mainFrame.setIconImage(ImageIO.read(getClass().getResourceAsStream("/icon.png")));
+            mainFrame.setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/icon.png"))));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        margin = new Insets(4, 4, 4, 4);
+        Insets margin = new Insets(4, 4, 4, 4);
         JPanel layoutPanel = new JPanel(new BorderLayout());
         layoutPanel.setPreferredSize(new Dimension(750, 300));
 
@@ -84,8 +51,8 @@ public class ClientGui implements Runnable {
         JPanel eastLayout = new JPanel(new BorderLayout());
         layoutPanel.add(eastLayout, BorderLayout.EAST);
 
-        activeUserList = new DefaultListModel();
-        activeUsers = new JList(activeUserList);
+        activeUserList = new DefaultListModel<>();
+        JList<String> activeUsers = new JList<>(activeUserList);
         activeUsers.addListSelectionListener((ListSelectionEvent e) -> {
         });
 
@@ -96,7 +63,6 @@ public class ClientGui implements Runnable {
 
         submitMessage = new JButton("Send");
 
-        submitMessage.setIcon(icon);
         southLayout.add(submitMessage, BorderLayout.EAST);
 
         messageArea = new JTextArea();
@@ -182,6 +148,22 @@ public class ClientGui implements Runnable {
         mainFrame.setVisible(true);
     }
 
+    public void setOut(PrintWriter out) {
+        this.out = out;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public JTextArea getChatArea() {
+        return chatArea;
+    }
+
+    public JTextArea getMessageArea() {
+        return messageArea;
+    }
+
     public DefaultListModel<String> getActiveUserList() {
         return activeUserList;
     }
@@ -192,16 +174,13 @@ public class ClientGui implements Runnable {
     }
 
     public void addSubmitMessageListener() {
-        submitMessage.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String line = submitMessage.getText();
-                if (line.equals("")) {
-                    return;
-                }
-                out.println(line);
-                submitMessage.setText("");
+        submitMessage.addActionListener(e -> {
+            String line = submitMessage.getText();
+            if (line.equals("")) {
+                return;
             }
+            out.println(line);
+            submitMessage.setText("");
         });
     }
 

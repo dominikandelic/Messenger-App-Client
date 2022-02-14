@@ -8,18 +8,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 /**
- *
  * @author dominikandelic
  */
 public class MessageReader implements Runnable {
 
+    private final ClientGui gui;
     BufferedReader in;
     String line;
-    private boolean runnable = true;
-    private final ClientGui gui;
-
     String username;
     String userId;
+    private boolean runnable = true;
 
     public MessageReader(BufferedReader in, String username, String userId, ClientGui gui) {
         this.in = in;
@@ -53,10 +51,10 @@ public class MessageReader implements Runnable {
                         break;
                     }
                     if (line.contains("disconnected")) {
-                        String temp[] = line.split(" ");
+                        String[] temp = line.split(" ");
                         gui.getActiveUserList().removeElement(temp[0]);
                     } else if (line.contains("connected")) {
-                        String temp[] = line.split(" ");
+                        String[] temp = line.split(" ");
                         gui.getActiveUserList().addElement(temp[0]);
                     }
                     gui.getChatArea().append(line + "\n");

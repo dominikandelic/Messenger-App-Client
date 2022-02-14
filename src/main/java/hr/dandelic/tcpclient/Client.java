@@ -1,5 +1,6 @@
 package hr.dandelic.tcpclient;
 
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,14 +8,13 @@ import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.Scanner;
-import javax.swing.SwingUtilities;
 
 /**
- *
  * @author dominikandelic
  */
 public class Client {
 
+    static String[] activeUserArray;
     private static PrintWriter out;
     private static BufferedReader in;
     private static Socket socket;
@@ -23,7 +23,6 @@ public class Client {
     private static Scanner scanner;
     private static MessageReader messageReader;
     private static ClientGui gui;
-    static String[] activeUserArray;
 
     public static void main(String[] args) {
         Client client = new Client();
@@ -45,15 +44,12 @@ public class Client {
         gui.addSubmitMessageListener();
         Thread readerThread = new Thread(messageReader = new MessageReader(in, username, userId, gui));
         readerThread.start();
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                client.stop();
-                if (messageReader.isRunnable()) {
-                    messageReader.kill();
-                }
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            client.stop();
+            if (messageReader.isRunnable()) {
+                messageReader.kill();
             }
-        });
+        }));
     }
 
     public void start(String host, int port) {
